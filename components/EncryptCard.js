@@ -2,34 +2,39 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner"
+import { useContract, useContractWrite } from "@thirdweb-dev/react";
 
 
 function EncryptCard() {
+    const { contract } = useContract("0xC23F6c8950294dA69Ece9c2f457B05d5E11498f0");
+    const { mutateAsync: createVault, isLoading } = useContractWrite(contract, "createVault")
+    const handleDeploy = async () => {
+        try {
+            const data = await createVault({ args: [key] });
+            console.info("contract call successs", data);
+            toast("🎉Blockchain vault created successfully")
+        } catch (err) {
+            toast("⚠ Failed to create vault");
+            console.error("contract call failure", err);
+        }
+    }
+
     const [key, setKey] = useState("");
 
     const keyChange = (event) => {
         setKey(event.target.value);
     };
 
-    const handleDeploy = () => {
-        console.log(key);
-        const result = true;
-        if(result){
-            toast("🎉Blockchain vault created successfully")
-        }else{
-            toast("⚠ Failed to create vault")
-        }
-    };
 
     return (
         <div className="flex justify-center items-center mt-20">
