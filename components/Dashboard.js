@@ -64,13 +64,17 @@ function Dashboard() {
     };
 
     // getvault
-    const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai.g.alchemy.com/v2/BK4Co15Ehtfnk15TXtuABpPWiT67rtXv");
-    const signer = provider.getSigner();
+    // const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai.infura.io/v3/617a4f657e544795a8bf777ca806f798");
+    // const signer = provider.getSigner();
     // Assuming you have the contract ABI and address
     const contractAddress = "0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8";
+    
 
     async function getVault() {
         // Check if the contract object is defined
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
         if (!contract || !contract.abi) {
             console.error("Contract is not defined.");
             return;
@@ -108,6 +112,10 @@ function Dashboard() {
     };
 
     const getMyKey = async () => {
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
         // Check if the contract object is defined
         if (!contract || !contract.abi) {
             console.error("Contract is not defined.");
