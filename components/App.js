@@ -12,6 +12,8 @@ import {
 } from "@thirdweb-dev/react";
 
 import { useEffect } from "react";
+import Lottie from "lottie-react";
+import welcome from "@/components/welcome.json";
 
 export default function Home() {
     const connectionStatus = useConnectionStatus();
@@ -30,7 +32,17 @@ export default function Home() {
     return (
         <main className="pl-12 pr-12">
             <Navbar />
-            {connectionStatus == "connected" && data == "0x0000000000000000000000000000000000000000" ? (
+            {connectionStatus === "disconnected" ? (
+                <Lottie
+                    animationData={welcome}
+                    loop={true}
+                    style={{
+                        width: '95vw', height: '80vh', display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                />
+            ) : connectionStatus === "connected" && data === "0x0000000000000000000000000000000000000000" ? (
                 <EncryptCard />
             ) : (
                 <Dashboard />

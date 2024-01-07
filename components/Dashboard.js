@@ -27,6 +27,7 @@ const ethers = require("ethers");
 import CryptoJS from "crypto-js";
 
 function Dashboard() {
+    const connectionStatus = useConnectionStatus();
     const address = useAddress();
     const { contract } = useContract(
         "0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8"
@@ -63,7 +64,7 @@ function Dashboard() {
     };
 
     // getvault
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai.g.alchemy.com/v2/BK4Co15Ehtfnk15TXtuABpPWiT67rtXv");
     const signer = provider.getSigner();
     // Assuming you have the contract ABI and address
     const contractAddress = "0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8";
@@ -96,6 +97,7 @@ function Dashboard() {
         contract,
         "destoryVault"
     );
+
     const handleDestory = async () => {
         try {
             const data = await destoryVault({ args: [] });
@@ -130,11 +132,12 @@ function Dashboard() {
     };
 
     useEffect(() => {
-        getMyKey();
-        getVault();
+        if(connectionStatus == "connected"){
+            getMyKey();
+            getVault();
+        }
     }, [getMyKey]);
 
-    const connectionStatus = useConnectionStatus();
 
     return (
         <div className="flex mt-4">
