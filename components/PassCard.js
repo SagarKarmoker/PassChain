@@ -27,10 +27,19 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import CryptoJS from "crypto-js";
+import { useContract, useContractWrite } from "@thirdweb-dev/react";
 
 export default function PassCard(props) {
-    const handleDelete = () => {
-        console.log("delete");
+    const { contract } = useContract("0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8");
+    const { mutateAsync: deletePass, isLoading } = useContractWrite(contract, "deletePass")
+
+    const handleDelete = async () => {
+        try {
+            const deleteCon = await deletePass({ args: [props.cardIndex] });
+            toast("❌ Deleted successfully")
+        } catch (err) {
+            toast("❌ Failed to delete")
+        }
     };
 
     const handleEdit = () => {
@@ -43,24 +52,24 @@ export default function PassCard(props) {
             console.error("Encryption text or key is missing.");
             return ""; // Return empty string or handle the error as needed
         }
-    
+
         try {
             const decrypted = CryptoJS.AES.decrypt(enText, props.myKey);
             const originalText = decrypted.toString(CryptoJS.enc.Utf8);
-            
+
             // Check if decryption was successful
             if (!originalText) {
                 console.error("Decryption failed.");
                 return ""; // Return empty string or handle the error as needed
             }
-    
+
             return originalText;
         } catch (error) {
             console.error("Error in decryption:", error);
             return ""; // Return empty string or handle the error as needed
         }
     };
-    
+
 
     return (
         <>
