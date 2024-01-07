@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -26,6 +26,16 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter
+} from "@/components/ui/dialog"
+
 import CryptoJS from "crypto-js";
 import { useContract, useContractWrite } from "@thirdweb-dev/react";
 
@@ -42,9 +52,25 @@ export default function PassCard(props) {
         }
     };
 
-    const handleEdit = () => {
-        // use the existing dashboard add pass card
-    };
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const { mutateAsync: updatePass } = useContractWrite(contract, "updatePass")
+    const handleEdit = async () => {
+        try {
+            const _username = CryptoJS.AES.encrypt(username, props.myKey).toString();
+            const _email = CryptoJS.AES.encrypt(email, props.myKey).toString();
+            const _password = CryptoJS.AES.encrypt(password, props.myKey).toString();
+            const _url = CryptoJS.AES.encrypt(decryptPass(props.dataFromParent[3]), props.myKey).toString();
+
+            await updatePass({ args: [props.cardIndex, _username, _email, _password, _url] });
+            toast("🎉Updated successfully")
+        } catch (err) {
+            toast("⚠ Failed to update")
+            console.error("contract call failure", err);
+        }
+    }
 
     const decryptPass = (enText) => {
         // Check if the encryption text and key are defined
@@ -70,7 +96,6 @@ export default function PassCard(props) {
         }
     };
 
-
     return (
         <>
             <Card className="w-[350px]">
@@ -95,9 +120,44 @@ export default function PassCard(props) {
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                    <Button variant="secondary" onClick={handleEdit}>
-                        Edit
-                    </Button>
+                    {/*  */}
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="outline">Edit</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Edit information</DialogTitle>
+                                <DialogDescription>
+                                    Make changes to your information here. Click save when you're done.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="username" className="text-right">
+                                        Username
+                                    </Label>
+                                    <Input id="username" placeholder={decryptPass(props.dataFromParent[0])} className="col-span-3" onChange={(e) => setUsername(e.target.value)} />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="email" className="text-right">
+                                        Email
+                                    </Label>
+                                    <Input id="email" placeholder={decryptPass(props.dataFromParent[1])} className="col-span-3" onChange={(e) => setEmail(e.target.value)} />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="password" className="text-right">
+                                        Password
+                                    </Label>
+                                    <Input id="password" placeholder={decryptPass(props.dataFromParent[2])} className="col-span-3" onChange={(e) => setPassword(e.target.value)}/>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button onClick={handleEdit}>Save changes</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                    {/*  */}
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button variant="destructive">Delete</Button>

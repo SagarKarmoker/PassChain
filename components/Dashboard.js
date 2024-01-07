@@ -142,7 +142,7 @@ function Dashboard() {
                 {/* Content for the right 60% width */}
                 <div className="grid grid-cols-3 gap-4">
                     {vaultData.map((item, index) => (
-                        item[0] != "" && <PassCard key={index} dataFromParent={item} vaultAddr={data} myKey={key} />
+                        item[0] != "" && <PassCard cardIndex={index} dataFromParent={item} vaultAddr={data} myKey={key} />
                     ))}
                 </div>
             </div>
