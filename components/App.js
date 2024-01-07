@@ -14,6 +14,7 @@ import {
 import { useEffect } from "react";
 import Lottie from "lottie-react";
 import welcome from "@/components/welcome.json";
+import Footer from "./Footer";
 
 export default function Home() {
     const connectionStatus = useConnectionStatus();
@@ -47,6 +48,7 @@ export default function Home() {
             ) : (
                 <Dashboard />
             )}
+            <Footer />
             <Toaster />
         </main>
     );
