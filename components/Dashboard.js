@@ -18,11 +18,12 @@ import PassCard from "./PassCard";
 import { useContract, useContractWrite, useContractRead, useAddress, useSigner, Web3Button } from "@thirdweb-dev/react";
 
 const ethers = require('ethers');
+import CryptoJS from 'crypto-js';
 
 
 function Dashboard() {
     const address = useAddress();
-    const { contract } = useContract("0xA82B3F6eeF8F4ff120ec425053B6014BB7a954B9");
+    const { contract } = useContract("0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8");
     const { data } = useContractRead(contract, "getVaultAddr", [address]);
     const { mutateAsync: addPass, isLoading } = useContractWrite(contract, "addPass")
 
@@ -35,12 +36,17 @@ function Dashboard() {
 
     const handleSavePass = async () => {
         try {
-            const addPassData = await addPass({ args: [username, email, password, url] });
+            const _username = CryptoJS.AES.encrypt(username, key).toString();
+            const _email = CryptoJS.AES.encrypt(email, key).toString();
+            const _password = CryptoJS.AES.encrypt(password, key).toString();
+            const _url = CryptoJS.AES.encrypt(url, key).toString();
+
+            const addPassData = await addPass({ args: [_username, _email, _password, _url] });
             console.info("contract call successs", addPassData);
             toast("🎉Saved successfully")
         } catch (err) {
             toast("⚠ Failed to save password")
-            // console.error("contract call failure", err);
+            console.error("contract call failure", err);
         }
     }
 
@@ -48,9 +54,15 @@ function Dashboard() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     // Assuming you have the contract ABI and address
-    const contractAddress = "0xA82B3F6eeF8F4ff120ec425053B6014BB7a954B9";
+    const contractAddress = "0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8";
 
     async function getVault() {
+        // Check if the contract object is defined
+        if (!contract || !contract.abi) {
+            console.error("Contract is not defined.");
+            return;
+        }
+
         const contractABI = contract.abi;
         // Create a contract instance
         const mycontract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -63,6 +75,31 @@ function Dashboard() {
             console.error(error);
         }
     }
+
+    const getMyKey = async () => {
+        // Check if the contract object is defined
+        if (!contract || !contract.abi) {
+            console.error("Contract is not defined.");
+            return;
+        }
+
+        const contractABI = contract.abi;
+        // Create a contract instance
+        const mycontract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        // Call the contract function
+        try {
+            const myKey = await mycontract.getMyKey();
+            setKey(myKey);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        getMyKey();
+        getVault();
+    }, [getMyKey])
 
     return (
         <div className="flex mt-4">
@@ -104,12 +141,8 @@ function Dashboard() {
             <div className="w-6/10">
                 {/* Content for the right 60% width */}
                 <div className="grid grid-cols-3 gap-4">
-                    <Input id="key" name="key" type="key" placeholder="Encrypt Key" onChange={(e) => setKey(e.target.value)} />
-                    <Button onClick={getVault}>Get Password</Button>
-                </div>
-                <div className="grid grid-cols-3 gap-4 mt-5">
                     {vaultData.map((item, index) => (
-                        <PassCard key={index} dataFromParent={item} vaultAddr={data}/>
+                        <PassCard key={index} dataFromParent={item} vaultAddr={data} myKey={key} />
                     ))}
                 </div>
             </div>

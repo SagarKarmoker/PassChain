@@ -17,7 +17,7 @@ export default function Home() {
     const connectionStatus = useConnectionStatus();
     const address = useAddress();
 
-    const { contract } = useContract("0xA82B3F6eeF8F4ff120ec425053B6014BB7a954B9");
+    const { contract } = useContract("0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8");
     const { data, isLoading, error } = useContractRead(contract, "getVaultAddr", [address]);
 
     useEffect(() => {
