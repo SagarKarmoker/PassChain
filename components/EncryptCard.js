@@ -16,7 +16,7 @@ import { useContract, useContractWrite } from "@thirdweb-dev/react";
 
 
 function EncryptCard() {
-    const { contract } = useContract("0xC23F6c8950294dA69Ece9c2f457B05d5E11498f0");
+    const { contract } = useContract("0xA82B3F6eeF8F4ff120ec425053B6014BB7a954B9");
     const { mutateAsync: createVault, isLoading } = useContractWrite(contract, "createVault")
     const handleDeploy = async () => {
         try {

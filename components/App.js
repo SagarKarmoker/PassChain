@@ -17,7 +17,7 @@ export default function Home() {
     const connectionStatus = useConnectionStatus();
     const address = useAddress();
 
-    const { contract } = useContract("0xC23F6c8950294dA69Ece9c2f457B05d5E11498f0");
+    const { contract } = useContract("0xA82B3F6eeF8F4ff120ec425053B6014BB7a954B9");
     const { data, isLoading, error } = useContractRead(contract, "getVaultAddr", [address]);
 
     useEffect(() => {
@@ -30,7 +30,7 @@ export default function Home() {
     return (
         <main className="pl-12 pr-12">
             <Navbar />
-            {connectionStatus == "connected" && data == null ? (
+            {connectionStatus == "connected" && data == "0x0000000000000000000000000000000000000000" ? (
                 <EncryptCard />
             ) : (
                 <Dashboard />

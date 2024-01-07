@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -15,12 +15,14 @@ import { toast } from "sonner"
 import { Separator } from "@/components/ui/separator"
 import PassCard from "./PassCard";
 
-import { useContract, useContractWrite, useContractRead, useAddress } from "@thirdweb-dev/react";
+import { useContract, useContractWrite, useContractRead, useAddress, useSigner, Web3Button } from "@thirdweb-dev/react";
+
+const ethers = require('ethers');
 
 
 function Dashboard() {
     const address = useAddress();
-    const { contract } = useContract("0xC23F6c8950294dA69Ece9c2f457B05d5E11498f0");
+    const { contract } = useContract("0xA82B3F6eeF8F4ff120ec425053B6014BB7a954B9");
     const { data } = useContractRead(contract, "getVaultAddr", [address]);
     const { mutateAsync: addPass, isLoading } = useContractWrite(contract, "addPass")
 
@@ -28,7 +30,8 @@ function Dashboard() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [url, setURL] = useState('');
-
+    const [key, setKey] = useState('');
+    const [vaultData, setVaultData] = useState([]);
 
     const handleSavePass = async () => {
         try {
@@ -41,20 +44,25 @@ function Dashboard() {
         }
     }
 
-    const { mutateAsync: getVault } = useContractWrite(contract, "getVault");
+    // getvault 
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    // Assuming you have the contract ABI and address
+    const contractAddress = "0xA82B3F6eeF8F4ff120ec425053B6014BB7a954B9";
 
-    const getMyVault = async () => {
+    async function getVault() {
+        const contractABI = contract.abi;
+        // Create a contract instance
+        const mycontract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        // Call the contract function
         try {
-            const vaultdata = await getVault({});
-            console.info("contract call successs", vaultdata);
-        } catch (err) {
-            console.log(err)
+            const data = await mycontract.getVault(key);
+            setVaultData(data); // Update the state with the fetched data
+        } catch (error) {
+            console.error(error);
         }
     }
-
-    useEffect(() => {
-        getMyVault();
-    }, [getMyVault])
 
     return (
         <div className="flex mt-4">
@@ -64,7 +72,7 @@ function Dashboard() {
                     <CardHeader>
                         <CardTitle>Add Password to vault</CardTitle>
                         <CardDescription>
-                            Vault: {data?.slice(0,10) + "..." + data?.slice(25, 32)}
+                            Vault: {data?.slice(0, 10) + "..." + data?.slice(25, 32)}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -96,16 +104,13 @@ function Dashboard() {
             <div className="w-6/10">
                 {/* Content for the right 60% width */}
                 <div className="grid grid-cols-3 gap-4">
-                    {/* <PassCard />
-                    <PassCard />
-                    <PassCard />
-                    <PassCard />
-                    <PassCard />
-                    <PassCard />
-                    <PassCard />
-                    <PassCard /> */}
-
-                    {}
+                    <Input id="key" name="key" type="key" placeholder="Encrypt Key" onChange={(e) => setKey(e.target.value)} />
+                    <Button onClick={getVault}>Get Password</Button>
+                </div>
+                <div className="grid grid-cols-3 gap-4 mt-5">
+                    {vaultData.map((item, index) => (
+                        <PassCard key={index} dataFromParent={item} vaultAddr={data}/>
+                    ))}
                 </div>
             </div>
         </div>

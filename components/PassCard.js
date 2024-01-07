@@ -26,7 +26,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export default function PassCard() {
+export default function PassCard(props) {
 
     const handleDelete = () => {
         console.log("delete")
@@ -40,15 +40,15 @@ export default function PassCard() {
         <>
             <Card className="w-[350px]">
                 <CardHeader>
-                    <CardTitle>URL: </CardTitle>
-                    <CardDescription>Vault: 0x000...000</CardDescription>
+                    <CardTitle>URL: {props.dataFromParent[3]}</CardTitle>
+                    <CardDescription>Vault: {props.vaultAddr.slice(0, 10) + "..." + props.vaultAddr.slice(25, 32)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid w-full items-center gap-4">
                         <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="username">Username:</Label>
-                            <Label htmlFor="email">Email: </Label>
-                            <Label htmlFor="password">Password: </Label>
+                            <Label htmlFor="username">Username: {props.dataFromParent[0]}</Label>
+                            <Label htmlFor="email">Email: {props.dataFromParent[1]}</Label>
+                            <Label htmlFor="password">Password: {props.dataFromParent[2]}</Label>
                         </div>
                     </div>
                 </CardContent>
