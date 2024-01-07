@@ -20,8 +20,7 @@ import {
     useContractWrite,
     useContractRead,
     useAddress,
-    useSigner,
-    Web3Button,
+    useConnectionStatus
 } from "@thirdweb-dev/react";
 
 const ethers = require("ethers");
@@ -135,9 +134,12 @@ function Dashboard() {
         getVault();
     }, [getMyKey]);
 
+    const connectionStatus = useConnectionStatus();
+
     return (
         <div className="flex mt-4">
-            <div className="w-3/10">
+            {connectionStatus == "connected" ? (
+                <div className="w-3/10">
                 {/* Content for the left 30% width */}
                 <Card className="w-[350px]">
                     <CardHeader>
@@ -190,7 +192,6 @@ function Dashboard() {
                         </Button>
                     </CardFooter>
                 </Card>
-
                 {/* destory */}
                 <Button
                     className="w-full mt-5"
@@ -200,6 +201,10 @@ function Dashboard() {
                     Destroy Vault
                 </Button>
             </div>
+            ) : (
+                <div>Please connect wallet</div> 
+            )}
+            
             <div className="w-1/10 pl-3 pr-3">
                 {/* Content for the right 10% width */}
                 <Separator orientation="vertical" />

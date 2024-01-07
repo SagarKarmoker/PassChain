@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Toaster } from "@/components/ui/sonner"
 import Dashboard from "@/components/Dashboard";
 import {
-  ThirdwebProvider, 
+  ThirdwebProvider,
   metamaskWallet,
   coinbaseWallet,
   walletConnect,
@@ -19,19 +19,18 @@ import App from "@/components/App";
 export default function Home() {
 
   return (
-    <ThirdwebProvider activeChain="mumbai" clientId="98a7c778fd35fb7e601259268e78aff8"
+    <ThirdwebProvider activeChain="mumbai" clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
       supportedWallets={[
-        metamaskWallet(),
+        metamaskWallet({ recommended: true }),
         coinbaseWallet({ recommended: true }),
         walletConnect(),
-        localWallet(),
         embeddedWallet({
           auth: {
             options: [
               "email",
-              "google",
               "apple",
               "facebook",
+              "google",
             ],
           },
         }),

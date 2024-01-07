@@ -17,6 +17,7 @@ function Navbar() {
         <ConnectWallet
           theme={"dark"}
           modalSize={"wide"}
+          modalTitleIconUrl={""}
         />
 
       </nav>

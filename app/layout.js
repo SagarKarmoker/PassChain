@@ -4,7 +4,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'PassChain',
+  title: 'PassChain 🔐| The Decentralized Password Manager',
   description: 'Your blockchain based password manager',
 }
 
