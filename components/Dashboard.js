@@ -97,10 +97,37 @@ function Dashboard() {
         }
     }
 
-    const { mutateAsync: destoryVault } = useContractWrite(
-        contract,
-        "destoryVault"
-    );
+    // const { mutateAsync: destoryVault } = useContractWrite(
+    //     contract,
+    //     "destoryVault"
+    // );
+
+    const destoryVault = async () => { 
+        // Check if the contract object is defined
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        if (!contract || !contract.abi) {
+            console.error("Contract is not defined.");
+            return;
+        }
+
+        const contractABI = contract.abi;
+        // Create a contract instance
+        const mycontract = new ethers.Contract(
+            contractAddress,
+            contractABI,
+            signer
+        );
+
+        // Call the contract function
+        try {
+            const data = await mycontract.destoryVault();
+            console.info("contract call successs", data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const handleDestory = async () => {
         try {
@@ -150,7 +177,7 @@ function Dashboard() {
     return (
         <div className="flex mt-4">
             {connectionStatus == "connected" ? (
-                <div className="w-3/10">
+                data != "0x0000000000000000000000000000000000000000" ? (<div className="w-3/10">
                 {/* Content for the left 30% width */}
                 <Card className="w-[350px]">
                     <CardHeader>
@@ -211,7 +238,9 @@ function Dashboard() {
                 >
                     Destroy Vault
                 </Button>
-            </div>
+                </div>) : (
+                    <div>Create vault</div>
+                )
             ) : (
                 <div>Please connect wallet</div> 
             )}
