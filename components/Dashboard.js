@@ -30,7 +30,7 @@ function Dashboard() {
     const connectionStatus = useConnectionStatus();
     const address = useAddress();
     const { contract } = useContract(
-        "0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8"
+        "0x12f931DAE6780C9f88f986A497871FF600178e31"
     );
     const { data } = useContractRead(contract, "getVaultAddr", [address]);
     const { mutateAsync: addPass, isLoading } = useContractWrite(
@@ -67,7 +67,7 @@ function Dashboard() {
     // const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai.infura.io/v3/617a4f657e544795a8bf777ca806f798");
     // const signer = provider.getSigner();
     // Assuming you have the contract ABI and address
-    const contractAddress = "0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8";
+    const contractAddress = "0x12f931DAE6780C9f88f986A497871FF600178e31";
     
 
     async function getVault() {

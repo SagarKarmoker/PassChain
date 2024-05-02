@@ -40,7 +40,7 @@ import CryptoJS from "crypto-js";
 import { useContract, useContractWrite } from "@thirdweb-dev/react";
 
 export default function PassCard(props) {
-    const { contract } = useContract("0x35649F537164f13935a1A80Da9eCd922C6dC4Cf8");
+    const { contract } = useContract("0x12f931DAE6780C9f88f986A497871FF600178e31");
     const { mutateAsync: deletePass, isLoading } = useContractWrite(contract, "deletePass")
 
     const handleDelete = async () => {
